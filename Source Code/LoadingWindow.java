@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 /**
  * LoadingWindow, Window that loads in tracked assets and starts main window.
  * @author Nagoshi, Vincent
- * @version 1.01.01
+ * @version 1.02.00
  */
 
 @SuppressWarnings("serial")

@@ -4,12 +4,11 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  * Asset, Contains all data for an asset and its indicators.
  * @author Nagoshi, Vincent
- * @version 1.01.01
+ * @version 1.02.00
  */
 
 public class Asset {
@@ -22,21 +21,146 @@ public class Asset {
   public Asset(String assetName) throws IOException {
     this.assetName = assetName;
     this.data = new ArrayList<Data>();
-    URL link = new URL("http://www.google.com/finance/historical?q=" + assetName.replaceAll(":", "%3A") + "&output=csv");
+    URL link = new URL("https://markets.financialcontent.com/stocks/action/gethistoricaldata?Symbol=" + assetName + "&Range=13");//TODO
     BufferedReader br = new BufferedReader(new InputStreamReader(link.openStream()));
     String in;
-    br.readLine();
-    while((in = br.readLine()) != null) {
-      StringTokenizer st = new StringTokenizer(in, ",");
-      String date = st.nextToken();
-      BigDecimal open = new BigDecimal(st.nextToken());
-      BigDecimal high = new BigDecimal(st.nextToken());
-      BigDecimal low = new BigDecimal(st.nextToken());
-      BigDecimal close = new BigDecimal(st.nextToken());
-      BigDecimal volume = new BigDecimal(st.nextToken());
-      data.add(new Data(date, open, low, high, close, volume));
+    //Test to make sure there is data for the stock. FinancialContent will always send a csv regardless of assetName
+    String test = br.readLine();
+    if(test == null) {
+      throw new IOException();
     }
+    //Read data from FinancialContent
+    while((in = br.readLine()) != null) {
+      String[] stk = in.split(",");
+      String date = stk[1] == null || stk[8].equals("") ? "NA" : stk[1];
+      BigDecimal open = new BigDecimal(stk[2] == null || stk[2].equals("") ? "-1" : stk[2]);
+      BigDecimal high = new BigDecimal(stk[3] == null || stk[3].equals("") ? "-1" : stk[3]);
+      BigDecimal low = new BigDecimal(stk[4] == null || stk[4].equals("") ? "-1" : stk[4]);
+      BigDecimal close = new BigDecimal(stk[5] == null || stk[5].equals("") ? "-1" : stk[5]);
+      BigDecimal volume = new BigDecimal(stk[6] == null || stk[6].equals("") ? "-1" : stk[6]);
+      BigDecimal change = new BigDecimal(stk[7] == null || stk[7].equals("") ? "-1" : stk[7]);
+      String perChange = stk[8] == null || stk[8].equals("") ? "NA" : stk[8];
+      data.add(new Data(date, open, low, high, close, volume, change, perChange));
+      
+    }
+    patchData();
     action = buySellSignal(data.toArray(new Data[1]));
+  }
+  
+  //replaces any missing data with the average of the before and after prices
+  //defaults to closest known data when neighbor data is missing
+  private void patchData() {
+    BigDecimal neg = new BigDecimal(-1);
+    for(int i = 0; i < data.size(); i++) {
+      if(data.get(i).getOpen().equals(neg)) {
+        if(i == 0) {//start of data
+          boolean foundData = false;
+          for(int j = 1; j < data.size(); j++) {
+            if(!data.get(j).getOpen().equals(neg)) {
+              data.get(i).setOpen(new BigDecimal(data.get(j).getOpen().toString()));
+              foundData = true;
+              break;
+            }
+          }
+          if(!foundData) {
+            data.get(i).setOpen(new BigDecimal(0));
+          }
+        }
+        else if(i == data.size() - 1) {//end of data
+          data.get(i).setOpen(new BigDecimal(data.get(i - 1).getOpen().toString()));
+        }
+        else {
+          if(data.get(i + 1).getOpen().equals(neg)) {
+            data.get(i).setOpen(new BigDecimal(data.get(i - 1).getOpen().toString()));
+          }
+          else {
+            data.get(i).setOpen(new BigDecimal((data.get(i - 1).getOpen().add(data.get(i + 1).getOpen())).divide(new BigDecimal(2)).toString()));
+          
+          }
+        }
+      }
+      if(data.get(i).getHigh().equals(neg)) {
+        if(i == 0) {//start of data
+          boolean foundData = false;
+          for(int j = 1; j < data.size(); j++) {
+            if(!data.get(j).getHigh().equals(neg)) {
+              data.get(i).setHigh(new BigDecimal(data.get(j).getHigh().toString()));
+              foundData = true;
+              break;
+            }
+          }
+          if(!foundData) {
+            data.get(i).setHigh(new BigDecimal(0));
+          }
+        }
+        else if(i == data.size() - 1) {//end of data
+          data.get(i).setHigh(new BigDecimal(data.get(i - 1).getHigh().toString()));
+        }
+        else {
+          if(data.get(i + 1).getOpen().equals(neg)) {
+            data.get(i).setHigh(new BigDecimal(data.get(i - 1).getHigh().toString()));
+          }
+          else {
+            data.get(i).setHigh(new BigDecimal((data.get(i - 1).getHigh().add(data.get(i + 1).getHigh())).divide(new BigDecimal(2)).toString()));
+          
+          }
+        }
+      }
+      if(data.get(i).getLow().equals(neg)) {
+        if(i == 0) {//start of data
+          boolean foundData = false;
+          for(int j = 1; j < data.size(); j++) {
+            if(!data.get(j).getLow().equals(neg)) {
+              data.get(i).setLow(new BigDecimal(data.get(j).getLow().toString()));
+              foundData = true;
+              break;
+            }
+          }
+          if(!foundData) {
+            data.get(i).setLow(new BigDecimal(0));
+          }
+        }
+        else if(i == data.size() - 1) {//end of data
+          data.get(i).setLow(new BigDecimal(data.get(i - 1).getLow().toString()));
+        }
+        else {
+          if(data.get(i + 1).getOpen().equals(neg)) {
+            data.get(i).setLow(new BigDecimal(data.get(i - 1).getLow().toString()));
+          }
+          else {
+            data.get(i).setLow(new BigDecimal((data.get(i - 1).getLow().add(data.get(i + 1).getLow())).divide(new BigDecimal(2)).toString()));
+          
+          }
+        }
+      }
+      if(data.get(i).getClose().equals(neg)) {
+        if(i == 0) {//start of data
+          boolean foundData = false;
+          for(int j = 1; j < data.size(); j++) {
+            if(!data.get(j).getClose().equals(neg)) {
+              data.get(i).setClose(new BigDecimal(data.get(j).getClose().toString()));
+              foundData = true;
+              break;
+            }
+          }
+          if(!foundData) {
+            data.get(i).setClose(new BigDecimal(0));
+          }
+        }
+        else if(i == data.size() - 1) {//end of data
+          data.get(i).setClose(new BigDecimal(data.get(i - 1).getClose().toString()));
+        }
+        else {
+          if(data.get(i + 1).getOpen().equals(neg)) {
+            data.get(i).setClose(new BigDecimal(data.get(i - 1).getClose().toString()));
+          }
+          else {
+            data.get(i).setClose(new BigDecimal((data.get(i - 1).getClose().add(data.get(i + 1).getClose())).divide(new BigDecimal(2)).toString()));
+          
+          }
+        }
+      }
+    }
   }
   
   //-1 sell

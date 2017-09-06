@@ -46,7 +46,7 @@ import javax.swing.text.StyledDocument;
 /**
  * MainWindow, primary window of the program, contains all buttons and sub menus.
  * @author Nagoshi, Vincent
- * @version 1.01.01
+ * @version 1.02.00
  */
 
 @SuppressWarnings("serial")
@@ -334,24 +334,24 @@ public class MainWindow extends JFrame {
           String text = source.getText().trim().toUpperCase();
           if(!text.equals("")) {
             try {
-              outputLogDoc.insertString(outputLogDoc.getLength(), "Searching for '" + text.replaceAll("%3A", ":") + "'...\n", null);
+              outputLogDoc.insertString(outputLogDoc.getLength(), "Searching for '" + text + "'...\n", null);
             } catch (BadLocationException e1) {}
             try {
               int i;
               for(i = 0; i < trackedAssets.size(); i++) {
-                if(trackedAssets.get(i).compareTo(text.replaceAll("%3A", ":")) == 0) {
+                if(trackedAssets.get(i).compareTo(text) == 0) {
                   i = -1;
                   break;
                 }
-                else if (trackedAssets.get(i).compareTo(text.replaceAll("%3A", ":")) > 0) {
+                else if (trackedAssets.get(i).compareTo(text) > 0) {
                   break;
                 }
               }
               if(i != -1) {
-                Asset asset = new Asset(text.replaceAll("%3A", ":"));
-                trackedAssets.add(i, text.replaceAll("%3A", ":"));
+                Asset asset = new Asset(text);
+                trackedAssets.add(i, text);
                 assetData.add(i, asset);
-                trackedAssetsListModel.insertElementAt(text.replaceAll("%3A", ":"), i);
+                trackedAssetsListModel.insertElementAt(text, i);
                 trackedAssetsList.setSelectedIndex(i);
                 StyleConstants.setForeground(outputLogStyle, new Color(122, 200, 122));
                 try {
@@ -404,7 +404,7 @@ public class MainWindow extends JFrame {
       outputLogStyle = outputLog.addStyle("removeStyle", null);
       try {
         outputLogDoc.insertString(0, "Please enter the ticker symbol of the stock you would like to track in the field above, then press the 'Track Asset' button to add it to tracking. ", null);
-        outputLogDoc.insertString(outputLogDoc.getLength(), "Some stocks will need to be formated 'EXCHANGE:SYMBOL'. Please check Google Finance for the proper code if the stock you wish to track is not found.\n\n", null);
+        outputLogDoc.insertString(outputLogDoc.getLength(), "Please double check FinancialContent for the proper code if the stock you wish to track is not found.\n\n", null);
       } catch (BadLocationException e1) {}
       outputLogScrollPane = new JScrollPane(outputLog);
       addPanelConstraints.anchor = GridBagConstraints.CENTER;
@@ -623,8 +623,9 @@ public class MainWindow extends JFrame {
         infoDoc.insertString(infoDoc.getLength(), "No program can with 100% certainty predict the future of the stock market.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "DO NOT directly edit the 'trackedAssets.txt' and 'MACDTrackerSettings.txt' files. ", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Doing so may cause the program to behave unintendedly.\n\n", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), "All financial data taken from Google Finance (www.google.com/finance).", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), " If you are unable to load an asset, please double check its stock code and code formatting at Google Finance.", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "All financial data taken from FinancialContent (markets.financialcontent.com).", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), " If you are unable to load an asset, please double check its stock code at FinancialContent.\n\n", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "Any missing data is filled in by averageing the values directly before and after the missing data.", infoTextPaneStyle);
       } catch (BadLocationException e) {}
       infoTextPane.setCaretPosition(0);
       infoScrollPane = new JScrollPane(infoTextPane);
