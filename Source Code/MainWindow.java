@@ -1,3 +1,20 @@
+/* 
+    Copyright (C) 2019  Nagoshi, Vincent
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -46,7 +63,7 @@ import javax.swing.text.StyledDocument;
 /**
  * MainWindow, primary window of the program, contains all buttons and sub menus.
  * @author Nagoshi, Vincent
- * @version 1.02.00
+ * @version 1.03.00
  */
 
 @SuppressWarnings("serial")
@@ -404,7 +421,7 @@ public class MainWindow extends JFrame {
       outputLogStyle = outputLog.addStyle("removeStyle", null);
       try {
         outputLogDoc.insertString(0, "Please enter the ticker symbol of the stock you would like to track in the field above, then press the 'Track Asset' button to add it to tracking. ", null);
-        outputLogDoc.insertString(outputLogDoc.getLength(), "Please double check FinancialContent for the proper code if the stock you wish to track is not found.\n\n", null);
+        outputLogDoc.insertString(outputLogDoc.getLength(), "Please double check The Wall Street Journal (quotes.wsj.com) for the proper code if the stock you wish to track is not found.\n\n", null);
       } catch (BadLocationException e1) {}
       outputLogScrollPane = new JScrollPane(outputLog);
       addPanelConstraints.anchor = GridBagConstraints.CENTER;
@@ -620,11 +637,12 @@ public class MainWindow extends JFrame {
         infoDoc.insertString(infoDoc.getLength(), "Historical data, including past buy and sell signals can be viewed by selecting a stock from the asset list. ", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "MACD Tracker shows up to a year worth of historical data.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Buy and Sell signals made by this program are purely recommendations based off of the MACD indicator. ", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), "No program can with 100% certainty predict the future of the stock market.\n\n", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "No program can with 100% certainty predict the future of the stock market. ", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "Please invest responsibly.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "DO NOT directly edit the 'trackedAssets.txt' and 'MACDTrackerSettings.txt' files. ", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Doing so may cause the program to behave unintendedly.\n\n", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), "All financial data taken from FinancialContent (markets.financialcontent.com).", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), " If you are unable to load an asset, please double check its stock code at FinancialContent.\n\n", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "All financial data used by MACD Tracker is obtained from from The Wall Street Journal (quotes.wsj.com).", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), " If you are unable to load an asset, please double check its stock code at The Wall Street Journal's page.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Any missing data is filled in by averageing the values directly before and after the missing data.", infoTextPaneStyle);
       } catch (BadLocationException e) {}
       infoTextPane.setCaretPosition(0);

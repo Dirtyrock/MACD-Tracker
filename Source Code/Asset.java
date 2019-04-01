@@ -1,3 +1,20 @@
+/* 
+    Copyright (C) 2019  Nagoshi, Vincent
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Asset, Contains all data for an asset and its indicators.
  * @author Nagoshi, Vincent
- * @version 1.02.00
+ * @version 1.03.00
  */
 
 public class Asset {
@@ -21,27 +38,25 @@ public class Asset {
   public Asset(String assetName) throws IOException {
     this.assetName = assetName;
     this.data = new ArrayList<Data>();
-    URL link = new URL("https://markets.financialcontent.com/stocks/action/gethistoricaldata?Symbol=" + assetName + "&Range=13");//TODO
+    URL link = new URL("https://quotes.wsj.com/" + assetName + "/historical-prices/download?MOD_VIEW=page&num_rows=365&range_days=365");
     BufferedReader br = new BufferedReader(new InputStreamReader(link.openStream()));
     String in;
-    //Test to make sure there is data for the stock. FinancialContent will always send a csv regardless of assetName
+    //Test to make sure there is data for the stock. quotes.wsj.com will always send a csv regardless of assetName.
+    //The first line is always column names, which are discarded
     String test = br.readLine();
     if(test == null) {
       throw new IOException();
     }
-    //Read data from FinancialContent
-    while((in = br.readLine()) != null) {
-      String[] stk = in.split(",");
-      String date = stk[1] == null || stk[8].equals("") ? "NA" : stk[1];
-      BigDecimal open = new BigDecimal(stk[2] == null || stk[2].equals("") ? "-1" : stk[2]);
-      BigDecimal high = new BigDecimal(stk[3] == null || stk[3].equals("") ? "-1" : stk[3]);
-      BigDecimal low = new BigDecimal(stk[4] == null || stk[4].equals("") ? "-1" : stk[4]);
-      BigDecimal close = new BigDecimal(stk[5] == null || stk[5].equals("") ? "-1" : stk[5]);
-      BigDecimal volume = new BigDecimal(stk[6] == null || stk[6].equals("") ? "-1" : stk[6]);
-      BigDecimal change = new BigDecimal(stk[7] == null || stk[7].equals("") ? "-1" : stk[7]);
-      String perChange = stk[8] == null || stk[8].equals("") ? "NA" : stk[8];
-      data.add(new Data(date, open, low, high, close, volume, change, perChange));
-      
+    //Read data from The Wall Street Journal (quotes.wsj.com)
+    while ((in = br.readLine()) != null) {
+      String[] stk = in.split(", ");
+      String date = stk[0];
+      BigDecimal open = new BigDecimal(stk[1] == null || stk[1].equals("") ? "-1" : stk[1]);
+      BigDecimal high = new BigDecimal(stk[2] == null || stk[2].equals("") ? "-1" : stk[2]);
+      BigDecimal low = new BigDecimal(stk[3] == null || stk[3].equals("") ? "-1" : stk[3]);
+      BigDecimal close = new BigDecimal(stk[4] == null || stk[4].equals("") ? "-1" : stk[4]);
+      BigDecimal volume = new BigDecimal(stk[5] == null || stk[5].equals("") ? "-1" : stk[5]);
+      data.add(new Data(date, open, low, high, close, volume)); 
     }
     patchData();
     action = buySellSignal(data.toArray(new Data[1]));
