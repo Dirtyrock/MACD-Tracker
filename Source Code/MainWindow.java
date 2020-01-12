@@ -63,7 +63,7 @@ import javax.swing.text.StyledDocument;
 /**
  * MainWindow, primary window of the program, contains all buttons and sub menus.
  * @author Nagoshi, Vincent
- * @version 1.03.00
+ * @version 1.03.01
  */
 
 @SuppressWarnings("serial")
@@ -421,7 +421,7 @@ public class MainWindow extends JFrame {
       outputLogStyle = outputLog.addStyle("removeStyle", null);
       try {
         outputLogDoc.insertString(0, "Please enter the ticker symbol of the stock you would like to track in the field above, then press the 'Track Asset' button to add it to tracking. ", null);
-        outputLogDoc.insertString(outputLogDoc.getLength(), "Please double check The Wall Street Journal (quotes.wsj.com) for the proper code if the stock you wish to track is not found.\n\n", null);
+        outputLogDoc.insertString(outputLogDoc.getLength(), "Please double check The Wall Street Journal (www.wsj.com/market-data/quotes) for the proper code if the stock you wish to track is not found.\n\n", null);
       } catch (BadLocationException e1) {}
       outputLogScrollPane = new JScrollPane(outputLog);
       addPanelConstraints.anchor = GridBagConstraints.CENTER;
@@ -641,7 +641,7 @@ public class MainWindow extends JFrame {
         infoDoc.insertString(infoDoc.getLength(), "Please invest responsibly.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "DO NOT directly edit the 'trackedAssets.txt' and 'MACDTrackerSettings.txt' files. ", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Doing so may cause the program to behave unintendedly.\n\n", infoTextPaneStyle);
-        infoDoc.insertString(infoDoc.getLength(), "All financial data used by MACD Tracker is obtained from from The Wall Street Journal (quotes.wsj.com).", infoTextPaneStyle);
+        infoDoc.insertString(infoDoc.getLength(), "All financial data used by MACD Tracker is obtained from from The Wall Street Journal (www.wsj.com/market-data/quotes).", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), " If you are unable to load an asset, please double check its stock code at The Wall Street Journal's page.\n\n", infoTextPaneStyle);
         infoDoc.insertString(infoDoc.getLength(), "Any missing data is filled in by averageing the values directly before and after the missing data.", infoTextPaneStyle);
       } catch (BadLocationException e) {}

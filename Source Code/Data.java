@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 /**
  * Data, Contains an Asset's information for one day.
  * @author Nagoshi, Vincent
- * @version 1.03.00
+ * @version 1.03.01
  */
 
 public class Data {

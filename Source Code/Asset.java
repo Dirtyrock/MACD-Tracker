@@ -25,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Asset, Contains all data for an asset and its indicators.
  * @author Nagoshi, Vincent
- * @version 1.03.00
+ * @version 1.03.01
  */
 
 public class Asset {
@@ -36,9 +36,11 @@ public class Asset {
   private BigDecimal[] signalData;
   
   public Asset(String assetName) throws IOException {
+	  
     this.assetName = assetName;
     this.data = new ArrayList<Data>();
-    URL link = new URL("https://quotes.wsj.com/" + assetName + "/historical-prices/download?MOD_VIEW=page&num_rows=365&range_days=365");
+    URL link = new URL("https://www.wsj.com/market-data/quotes/" + assetName + "/HISTORICAL-PRICES/download?num_rows=365&range_days=365");
+
     BufferedReader br = new BufferedReader(new InputStreamReader(link.openStream()));
     String in;
     //Test to make sure there is data for the stock. quotes.wsj.com will always send a csv regardless of assetName.

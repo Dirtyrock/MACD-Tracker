@@ -20,7 +20,7 @@ import java.util.Comparator;
 /**
  * StringComparator, comparator for two strings using Java's String.compareTo method.
  * @author Nagoshi, Vincent
- * @version 1.03.00
+ * @version 1.03.01
  */
 
 public class StringComparator implements Comparator<String> {

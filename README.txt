@@ -23,4 +23,13 @@ Buy and Sell signals made by this program are purely recommendations based
   the future of the stock market. Please invest with caution.
 
 All financial data used by MACD Tracker is obtained from The Wall Street Journal
-  (quotes.wsj.com).
+  (www.wsj.com/market-data/quotes).
+
+Change Log:
+  1.03.01:
+    * Changed handling of requesting data from The Wall Street Journal to align
+      with their new syntax for such requests
+  1.03.00:
+    * Main Release
+    * All stock data now obtained from The Wall Street Journal
+    * Added licensing under GPL-3.0
